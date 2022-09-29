@@ -49,10 +49,10 @@ function handleLose() {
 
   if (rect.right >= window.innerWidth) {
     playerScoreElem.textContent = Number.parseInt(playerScoreElem.textContent) + 1;
-    // playerWonSound.play();
+    playerWonSound.play();
   } else {
     computerScoreElem.textContent = Number.parseInt(computerScoreElem.textContent) + 1;
-    // computerWonSound.play();
+    computerWonSound.play();
   }
 
   ball.reset();
