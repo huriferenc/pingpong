@@ -7,7 +7,7 @@ const computerPaddle = new Paddle(document.getElementById('computer-paddle'));
 const playerScoreElem = document.getElementById('player-score');
 const computerScoreElem = document.getElementById('computer-score');
 
-const playerWonSound = new Audio('./player.mp3');
+const playerWonSound = new Audio('./player.m4a');
 const computerWonSound = new Audio('./computer.m4a');
 
 let lastTime;
