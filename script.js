@@ -49,10 +49,10 @@ function handleLose() {
 
   if (rect.right >= window.innerWidth) {
     playerScoreElem.textContent = Number.parseInt(playerScoreElem.textContent) + 1;
-    playerWonSound.play();
+    // playerWonSound.play();
   } else {
     computerScoreElem.textContent = Number.parseInt(computerScoreElem.textContent) + 1;
-    computerWonSound.play();
+    // computerWonSound.play();
   }
 
   ball.reset();
@@ -61,8 +61,10 @@ function handleLose() {
 
 // Touch-screen (mobile) device
 if ('ontouchmove' in document.documentElement) {
-  document.addEventListener('touchmove', (e) => {
-    playerPaddle.position = (e.y / window.innerHeight) * 100;
+  document.documentElement.addEventListener('touchmove', (e) => {
+    const evt = typeof e.originalEvent === 'undefined' ? e : e.originalEvent;
+    const touch = evt.touches[0] || evt.changedTouches[0];
+    playerPaddle.position = (touch.pageY / window.innerHeight) * 100;
   });
 }
 // Desktop device
