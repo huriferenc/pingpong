@@ -7,6 +7,9 @@ const computerPaddle = new Paddle(document.getElementById('computer-paddle'));
 const playerScoreElem = document.getElementById('player-score');
 const computerScoreElem = document.getElementById('computer-score');
 
+const playerWonSound = new Audio('./player.mp3');
+const computerWonSound = new Audio('./computer.m4a');
+
 let lastTime;
 function update(time) {
   if (lastTime != null) {
@@ -37,20 +40,36 @@ function isLose() {
 }
 
 function handleLose() {
+  playerWonSound.pause();
+  playerWonSound.currentTime = 0;
+  computerWonSound.pause();
+  computerWonSound.currentTime = 0;
+
   const rect = ball.rect();
 
   if (rect.right >= window.innerWidth) {
     playerScoreElem.textContent = Number.parseInt(playerScoreElem.textContent) + 1;
+    playerWonSound.play();
   } else {
     computerScoreElem.textContent = Number.parseInt(computerScoreElem.textContent) + 1;
+    computerWonSound.play();
   }
 
   ball.reset();
   computerPaddle.reset();
 }
 
-document.addEventListener('mousemove', (e) => {
-  playerPaddle.position = (e.y / window.innerHeight) * 100;
-});
+// Touch-screen (mobile) device
+if ('ontouchmove' in document.documentElement) {
+  document.addEventListener('touchmove', (e) => {
+    playerPaddle.position = (e.y / window.innerHeight) * 100;
+  });
+}
+// Desktop device
+else {
+  document.addEventListener('mousemove', (e) => {
+    playerPaddle.position = (e.y / window.innerHeight) * 100;
+  });
+}
 
 window.requestAnimationFrame(update);
