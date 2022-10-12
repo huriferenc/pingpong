@@ -1,6 +1,8 @@
 const INITIAL_VELOCITY = 0.08;
 const VELOCITY_INCREASE = 0.00001;
 
+const pongSound = new Audio('./pong.mp3');
+
 export default class Ball {
   constructor(ballElem) {
     this.ballElem = ballElem;
@@ -47,10 +49,12 @@ export default class Ball {
     const rect = this.rect();
     if (rect.bottom >= window.innerHeight || rect.top <= 0) {
       this.direction.y *= -1;
+      playPongSound();
     }
 
     if (paddleRects.some((item) => isCollision(item, rect))) {
       this.direction.x *= -1;
+      playPongSound();
     }
   }
 }
@@ -66,4 +70,10 @@ function isCollision(rect1, rect2) {
     rect1.top <= rect2.bottom &&
     rect1.bottom >= rect2.top
   );
+}
+
+function playPongSound() {
+  pongSound.pause();
+  pongSound.currentTime = 0;
+  pongSound.play();
 }

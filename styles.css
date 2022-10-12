@@ -41,6 +41,8 @@ body {
   --x: 50;
   --y: 50;
 
+  display: none;
+
   position: absolute;
   background-color: var(--foregroundColor);
   left: calc(var(--x) * 1vw);
@@ -70,4 +72,17 @@ body {
 .score > :first-child {
   text-align: right;
   border-right: 0.5vh solid var(--foregroundColor);
+}
+
+.start-button {
+  position: absolute;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  background-color: inherit;
+  border: none;
+  color: var(--foregroundColor);
+  opacity: 0.5;
+  font-size: 15vh;
+  cursor: pointer;
 }

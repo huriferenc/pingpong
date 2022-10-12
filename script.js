@@ -1,14 +1,13 @@
 import Ball from './Ball.js';
 import Paddle from './Paddle.js';
 
+const startButton = document.getElementById('start-button');
+
 const ball = new Ball(document.getElementById('ball'));
 const playerPaddle = new Paddle(document.getElementById('player-paddle'));
 const computerPaddle = new Paddle(document.getElementById('computer-paddle'));
 const playerScoreElem = document.getElementById('player-score');
 const computerScoreElem = document.getElementById('computer-score');
-
-const playerWonSound = new Audio('./player.m4a');
-const computerWonSound = new Audio('./computer.m4a');
 
 let lastTime;
 function update(time) {
@@ -40,24 +39,28 @@ function isLose() {
 }
 
 function handleLose() {
-  playerWonSound.pause();
-  playerWonSound.currentTime = 0;
-  computerWonSound.pause();
-  computerWonSound.currentTime = 0;
-
   const rect = ball.rect();
 
   if (rect.right >= window.innerWidth) {
     playerScoreElem.textContent = Number.parseInt(playerScoreElem.textContent) + 1;
-    playerWonSound.play();
   } else {
     computerScoreElem.textContent = Number.parseInt(computerScoreElem.textContent) + 1;
-    computerWonSound.play();
   }
 
   ball.reset();
   computerPaddle.reset();
 }
+
+startButton.addEventListener('click', () => {
+  console.log('START!');
+
+  const ballElem = ball.ballElem;
+  ballElem.style.display = 'block';
+  startButton.style.display = 'none';
+
+  // Start animation
+  window.requestAnimationFrame(update);
+});
 
 // Touch-screen (mobile) device
 if ('ontouchmove' in document.documentElement) {
@@ -73,5 +76,3 @@ else {
     playerPaddle.position = (e.y / window.innerHeight) * 100;
   });
 }
-
-window.requestAnimationFrame(update);
