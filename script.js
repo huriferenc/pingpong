@@ -9,6 +9,7 @@ const computerPaddle = new Paddle(document.getElementById('computer-paddle'));
 const playerScoreElem = document.getElementById('player-score');
 const computerScoreElem = document.getElementById('computer-score');
 
+let lightnessDirection = -1;
 let lastTime;
 function update(time) {
   if (lastTime != null) {
@@ -18,11 +19,33 @@ function update(time) {
 
     computerPaddle.update(delta, ball.y);
 
-    const hue = Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--hue')
+    let foregroundLightness = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--foregroundLightness')
+    );
+    const backgroundLightness = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--backgroundLightness')
     );
 
-    document.documentElement.style.setProperty('--hue', hue + delta * 0.01);
+    if (foregroundLightness <= 0) {
+      lightnessDirection = 1;
+    } else if (foregroundLightness >= 100) {
+      lightnessDirection = -1;
+    }
+
+    // To set ball and paddles more visible
+    const lightnessDiff = Math.floor(Math.abs(foregroundLightness - backgroundLightness));
+    if (lightnessDiff === 10) {
+      foregroundLightness += lightnessDirection * 20;
+    }
+
+    document.documentElement.style.setProperty(
+      '--foregroundLightness',
+      `${foregroundLightness + lightnessDirection * delta * 0.01}%`
+    );
+    document.documentElement.style.setProperty(
+      '--backgroundLightness',
+      `${backgroundLightness - lightnessDirection * delta * 0.01}%`
+    );
 
     if (isLose()) {
       handleLose();

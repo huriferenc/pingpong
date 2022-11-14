@@ -1,14 +1,20 @@
+@font-face {
+  font-family: RetroFont;
+  src: url('./PressStart2P-Regular.ttf') format('truetype');
+}
+
 *,
 *::after,
 *::before {
   box-sizing: border-box;
+  font-family: 'RetroFont', Arial, sans-serif;
 }
 
 :root {
-  --hue: 300;
-  --saturation: 50%;
-  --foregroundColor: hsl(var(--hue), var(--saturation), 75%);
-  --backgroundColor: hsl(var(--hue), var(--saturation), 20%);
+  --foregroundLightness: 100%;
+  --backgroundLightness: 0%;
+  --foregroundColor: hsl(0, 0%, var(--foregroundLightness));
+  --backgroundColor: hsl(0, 0%, var(--backgroundLightness));
 }
 
 body {
