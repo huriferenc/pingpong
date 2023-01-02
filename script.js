@@ -15,37 +15,11 @@ function update(time) {
   if (lastTime != null) {
     const delta = time - lastTime;
 
+    updateGround(delta);
+
     ball.update(delta, [playerPaddle.rect(), computerPaddle.rect()]);
 
     computerPaddle.update(delta, ball.y);
-
-    let foregroundLightness = Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--foregroundLightness')
-    );
-    const backgroundLightness = Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--backgroundLightness')
-    );
-
-    if (foregroundLightness <= 0) {
-      lightnessDirection = 1;
-    } else if (foregroundLightness >= 100) {
-      lightnessDirection = -1;
-    }
-
-    // To set ball and paddles more visible
-    const lightnessDiff = Math.floor(Math.abs(foregroundLightness - backgroundLightness));
-    if (lightnessDiff === 10) {
-      foregroundLightness += lightnessDirection * 20;
-    }
-
-    document.documentElement.style.setProperty(
-      '--foregroundLightness',
-      `${foregroundLightness + lightnessDirection * delta * 0.01}%`
-    );
-    document.documentElement.style.setProperty(
-      '--backgroundLightness',
-      `${backgroundLightness - lightnessDirection * delta * 0.01}%`
-    );
 
     if (isLose()) {
       handleLose();
@@ -54,6 +28,36 @@ function update(time) {
 
   lastTime = time;
   window.requestAnimationFrame(update);
+}
+
+function updateGround(delta) {
+  let foregroundLightness = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--foregroundLightness')
+  );
+  const backgroundLightness = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--backgroundLightness')
+  );
+
+  if (foregroundLightness <= 0) {
+    lightnessDirection = 1;
+  } else if (foregroundLightness >= 100) {
+    lightnessDirection = -1;
+  }
+
+  // To set ball and paddles more visible
+  const lightnessDiff = Math.floor(Math.abs(foregroundLightness - backgroundLightness));
+  if (lightnessDiff === 10) {
+    foregroundLightness += lightnessDirection * 20;
+  }
+
+  document.documentElement.style.setProperty(
+    '--foregroundLightness',
+    `${foregroundLightness + lightnessDirection * delta * 0.01}%`
+  );
+  document.documentElement.style.setProperty(
+    '--backgroundLightness',
+    `${backgroundLightness - lightnessDirection * delta * 0.01}%`
+  );
 }
 
 function isLose() {
