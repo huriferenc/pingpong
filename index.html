@@ -7,18 +7,21 @@
 
     <title>Ping Pong Game</title>
 
-    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      /* Canvas beállítása */
+      #game-table {
+        background-color: #000000;
+      }
+
+      /* Pontszám szöveg formázása */
+      #game-table canvas {
+        color: #ffffff;
+      }
+    </style>
 
     <script defer src="./script.js" type="module"></script>
   </head>
   <body>
-    <div class="score">
-      <div id="player-score">0</div>
-      <div id="computer-score">0</div>
-    </div>
-    <div class="ball" id="ball"></div>
-    <div class="paddle left" id="player-paddle"></div>
-    <div class="paddle right" id="computer-paddle"></div>
-    <button type="button" class="start-button" id="start-button">Start!</button>
+    <canvas id="game-table" width="500" height="300"></canvas>
   </body>
 </html>

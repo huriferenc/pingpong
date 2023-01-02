@@ -1,101 +1,173 @@
-import Ball from './Ball.js';
-import Paddle from './Paddle.js';
+// A canvas elem referenciája
+const canvas = document.getElementById('game-table');
+// A canvas 2D rajzoló kontextusa
+const ctx = canvas.getContext('2d');
 
-const startButton = document.getElementById('start-button');
+// A bal oldali ütő objektuma
+const leftPaddle = {
+  x: 10, // X koordináta
+  y: canvas.height / 2 - 50, // Y koordináta
+  width: 10, // Szélesség
+  height: 100 // Magasság
+};
 
-const ball = new Ball(document.getElementById('ball'));
-const playerPaddle = new Paddle(document.getElementById('player-paddle'));
-const computerPaddle = new Paddle(document.getElementById('computer-paddle'));
-const playerScoreElem = document.getElementById('player-score');
-const computerScoreElem = document.getElementById('computer-score');
+// A jobb oldali ütő objektuma
+const rightPaddle = {
+  x: canvas.width - 20, // X koordináta
+  y: canvas.height / 2 - 50, // Y koordináta
+  width: 10, // Szélesség
+  height: 100 // Magasság
+};
 
-let lightnessDirection = -1;
-let lastTime;
-function update(time) {
-  if (lastTime != null) {
-    const delta = time - lastTime;
+// A labda objektuma
+const ball = {
+  x: canvas.width / 2, // X koordináta
+  y: canvas.height / 2, // Y koordináta
+  radius: 10, // Sugár
+  speedX: 5, // X irányú sebesség
+  speedY: 5 // Y irányú sebesség
+};
 
-    ball.update(delta, [playerPaddle.rect(), computerPaddle.rect()]);
+// A bal oldali pontszám
+let leftScore = 0;
+// A jobb oldali pontszám
+let rightScore = 0;
 
-    computerPaddle.update(delta, ball.y);
+// Billentyűlenyomás eseményfigyelő
+document.addEventListener('keydown', (e) => {
+  const btnDelta = 6;
 
-    let foregroundLightness = Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--foregroundLightness')
-    );
-    const backgroundLightness = Number.parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--backgroundLightness')
-    );
-
-    if (foregroundLightness <= 0) {
-      lightnessDirection = 1;
-    } else if (foregroundLightness >= 100) {
-      lightnessDirection = -1;
-    }
-
-    // To set ball and paddles more visible
-    const lightnessDiff = Math.floor(Math.abs(foregroundLightness - backgroundLightness));
-    if (lightnessDiff === 10) {
-      foregroundLightness += lightnessDirection * 20;
-    }
-
-    document.documentElement.style.setProperty(
-      '--foregroundLightness',
-      `${foregroundLightness + lightnessDirection * delta * 0.01}%`
-    );
-    document.documentElement.style.setProperty(
-      '--backgroundLightness',
-      `${backgroundLightness - lightnessDirection * delta * 0.01}%`
-    );
-
-    if (isLose()) {
-      handleLose();
-    }
+  switch (e.key) {
+    case 'ArrowLeft':
+      moveFn(paddle.position - btnDelta);
+      break;
+    case 'ArrowRight':
+      moveFn(paddle.position + btnDelta);
+      break;
   }
-
-  lastTime = time;
-  window.requestAnimationFrame(update);
-}
-
-function isLose() {
-  const rect = ball.rect();
-  return rect.right >= window.innerWidth || rect.left <= 0;
-}
-
-function handleLose() {
-  const rect = ball.rect();
-
-  if (rect.right >= window.innerWidth) {
-    playerScoreElem.textContent = Number.parseInt(playerScoreElem.textContent) + 1;
-  } else {
-    computerScoreElem.textContent = Number.parseInt(computerScoreElem.textContent) + 1;
+});
+document.addEventListener('keydown', function (e) {
+  console.log(e.key);
+  switch (e.key) {
+    case 'w':
+      // Baloldali ütő felfelé mozgatása
+      leftPaddle.y -= 10;
+      break;
+    case 's':
+      // Baloldali ütő lefelé mozgatása
+      leftPaddle.y += 10;
+      break;
+    case 'ArrowUp':
+      // Jobboldali ütő felfelé mozgatása
+      rightPaddle.y -= 10;
+      break;
+    case 'ArrowDown':
+      // Jobboldali ütő lefelé mozgatása
+      rightPaddle.y += 10;
+      break;
   }
-
-  ball.reset();
-  computerPaddle.reset();
-}
-
-startButton.addEventListener('click', () => {
-  console.log('START!');
-
-  const ballElem = ball.ballElem;
-  ballElem.style.display = 'block';
-  startButton.style.display = 'none';
-
-  // Start animation
-  window.requestAnimationFrame(update);
 });
 
-// Touch-screen (mobile) device
-if ('ontouchmove' in document.documentElement) {
-  document.documentElement.addEventListener('touchmove', (e) => {
-    const evt = typeof e.originalEvent === 'undefined' ? e : e.originalEvent;
-    const touch = evt.touches[0] || evt.changedTouches[0];
-    playerPaddle.position = (touch.pageY / window.innerHeight) * 100;
-  });
+// Ütő rajzolása
+function drawPaddle(paddle) {
+  // Útvonal kezdése
+  ctx.beginPath();
+  // Téglalap rajzolása az ütő koordinátáira és méretére
+  ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+  // Kitöltő szín beállítása
+  ctx.fillStyle = '#ffffff';
+  // Kitöltés
+  ctx.fill();
+  // Útvonal bezárása
+  ctx.closePath();
 }
-// Desktop device
-else {
-  document.addEventListener('mousemove', (e) => {
-    playerPaddle.position = (e.y / window.innerHeight) * 100;
-  });
+
+// Labda rajzolása
+function drawBall() {
+  // Útvonal kezdése
+  ctx.beginPath();
+  // Kör rajzolása a labda koordinátáira és sugara szerint
+  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  // Kitöltő szín beállítása
+  ctx.fillStyle = '#ffffff';
+  // Kitöltés
+  ctx.fill();
+  // Útvonal bezárása
+  ctx.closePath();
 }
+
+// Pontszám rajzolása
+function drawScore() {
+  // Betűtípus beállítása
+  ctx.font = '16px Arial';
+  // Betűszín beállítása
+  ctx.fillStyle = '#ffffff';
+  // Pontszám kiírása a canvas-ra
+  ctx.fillText('Score: ' + leftScore + ' - ' + rightScore, 8, 20);
+}
+
+// Játék rajzolása
+function draw() {
+  // Canvas törlése
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Bal oldali ütő rajzolása
+  drawPaddle(leftPaddle);
+  // Jobb oldali ütő rajzolása
+  drawPaddle(rightPaddle);
+  // Labda rajzolása
+  drawBall();
+  // Pontszám rajzolása
+  drawScore();
+
+  // Labda mozgatása
+  ball.x += ball.speedX;
+  ball.y += ball.speedY;
+
+  // Labda ütközése a canvas alsó és felső szélével
+  if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+    // Y irányú sebesség változtatása
+    ball.speedY = -ball.speedY;
+  }
+
+  // Labda ütközése a bal oldali ütővel
+  if (ball.x - ball.radius < leftPaddle.x + leftPaddle.width) {
+    // Ha a labda a bal oldali ütő tetején vagy alján érkezik
+    if (ball.y > leftPaddle.y && ball.y < leftPaddle.y + leftPaddle.height) {
+      // X irányú sebesség változtatása
+      ball.speedX = -ball.speedX;
+    }
+    // Ha a labda nem érkezik az ütő tetején vagy alján
+    else {
+      // Jobb oldali pontszám növelése
+      rightScore++;
+      // Labda újrakezdése
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.speedX = -ball.speedX;
+    }
+  }
+
+  // Labda ütközése a jobb oldali ütővel
+  if (ball.x + ball.radius > rightPaddle.x) {
+    // Ha a labda a jobb oldali ütő tetején vagy alján érkezik
+    if (ball.y > rightPaddle.y && ball.y < rightPaddle.y + rightPaddle.height) {
+      // X irányú sebesség változtatása
+      ball.speedX = -ball.speedX;
+    }
+    // Ha a labda nem érkezik az ütő tetején vagy alján
+    else {
+      // Bal oldali pontszám növelése
+      leftScore++;
+      // Labda újrakezdése
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.speedX = -ball.speedX;
+    }
+  }
+
+  // Következő képkocka
+  requestAnimationFrame(draw);
+}
+
+// Első képkocka
+draw();
